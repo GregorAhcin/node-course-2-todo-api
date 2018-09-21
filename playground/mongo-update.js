@@ -10,23 +10,23 @@ MongoClient.connect(
 
     const db = client.db("TodoApp");
 
-    // db.collection("Todos")
-    //   .findOneAndUpdate(
-    //     {
-    //       _id: new ObjectID("5ba008ea1b21961b40d058a4")
-    //     },
-    //     {
-    //       $set: {
-    //         completed: true
-    //       }
-    //     },
-    //     {
-    //       returnOriginal: false
-    //     }
-    //   )
-    //   .then(result => {
-    //     console.log(result);
-    //   });
+    db.collection("Todos")
+      .findOneAndUpdate(
+        {
+          _id: new ObjectID("5ba008ea1b21961b40d058a4")
+        },
+        {
+          $set: {
+            completed: true
+          }
+        },
+        {
+          returnOriginal: false
+        }
+      )
+      .then(result => {
+        console.log(result);
+      });
 
     db.collection("Users")
       .findOneAndUpdate(
