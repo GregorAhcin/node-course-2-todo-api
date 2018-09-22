@@ -1,72 +1,74 @@
-const mongoose = require("mongoose");
+const express = require("express");
+const bodyParser = require("body-parser");
 
-mongoose.Promise = global.Promise; // v mongoose 5.0 ta vrstica ni potrebna
+const { User, Todo } = require("./models/models");
+const { mongoose } = require("./db/db");
 
-mongoose.connect("mongodb://localhost/TodoApp");
+let app = express();
 
-let Todo = mongoose.model("Todo", {
-  text: {
-    type: String,
-    required: true,
-    minlength: 2,
-    trim: true
-  },
-  completed: {
-    type: Boolean,
-    default: false
-  },
-  completedAt: {
-    type: Number,
-    default: null
-  }
+app.use(bodyParser.json());
+app.post("/todos", (req, res) => {
+  let todo = new Todo({
+    text: req.body.text
+  });
+
+  todo.save().then(
+    doc => {
+      res.send(doc);
+    },
+    e => {
+      res.status(400).send(e);
+    }
+  );
 });
 
-let novTodo = new Todo({
-  text: "go home"
+app.get("/", (req, res) => {
+  res.status(400).send("test");
 });
 
-novTodo.save().then(
-  doc => {
-    console.log("Saved to database: ", doc);
-  },
-  e => {
-    console.log("Cant save to database", e);
-  }
-);
-
-let novejsiTodo = new Todo({
-  text: "My bad not going to church.",
-  completed: false,
-  completedAt: 2
+app.listen(3000, () => {
+  console.log("Connected on port 3000.");
 });
 
-novejsiTodo.save().then(
-  doc => {
-    console.log(doc);
-  },
-  e => {
-    console.log("error has happend");
-  }
-);
+// MONGOOSE WRITES TO DATABASE
 
-let User = mongoose.model("User", {
-  email: {
-    type: String,
-    trim: true,
-    minlength: 5,
-    maxlength: 55
-  }
-});
+// let novUser = new User({
+//   email: "bubi.grega@gmail.com"
+// });
 
-let novUser = new User({
-  email: "bubi.grega@gmail.com"
-});
+// let novTodo = new Todo({
+//   text: "go home"
+// });
 
-novUser.save().then(
-  doc => {
-    console.log(doc);
-  },
-  e => {
-    console.log(e);
-  }
-);
+// novTodo.save().then(
+//   doc => {
+//     console.log("Saved to database: ", doc);
+//   },
+//   e => {
+//     console.log("Cant save to database", e);
+//   }
+// );
+
+// let novejsiTodo = new Todo({
+//   text: "My bad not going to church.",
+//   completed: false,
+//   completedAt: 2
+// });
+
+// novejsiTodo.save().then(
+//   doc => {
+//     console.log(doc);
+//   },
+//   e => {
+//     console.log("error has happend");
+//   }
+// );
+
+// novUser.save().then(
+//   doc => {
+//     console.log(doc);
+//   },
+//   e => {
+//     console.log(e);
+//   }
+// );
