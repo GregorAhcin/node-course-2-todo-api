@@ -22,13 +22,13 @@ app.post("/todos", (req, res) => {
   );
 });
 
-app.get("/", (req, res) => {
-  res.status(400).send("test");
-});
-
 app.listen(3000, () => {
   console.log("Connected on port 3000.");
 });
+
+module.exports = {
+  app
+};
 
 // MONGOOSE WRITES TO DATABASE
 
