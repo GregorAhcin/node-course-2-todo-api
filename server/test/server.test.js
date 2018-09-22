@@ -5,7 +5,7 @@ const { app } = require("./../server");
 const { Todo } = require("./../models/models");
 
 beforeEach(done => {
-  Todo.deleteMany({}).then(() => done());
+  Todo.remove({}).then(() => done());
 });
 
 describe("POST /todo", () => {
