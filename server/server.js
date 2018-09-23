@@ -6,6 +6,7 @@ const { User, Todo } = require("./models/models");
 const { mongoose } = require("./db/db");
 
 let app = express();
+let port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
@@ -51,8 +52,8 @@ app.get("/todos/:id", (req, res) => {
     .catch(e => res.status(400).send());
 });
 
-app.listen(3000, () => {
-  console.log("Connected on port 3000.");
+app.listen(port, () => {
+  console.log(`Connected on port ${port}.`);
 });
 
 module.exports = {
