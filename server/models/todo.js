@@ -1,13 +1,5 @@
 const mongoose = require("mongoose");
-
-let User = mongoose.model("User", {
-  email: {
-    type: String,
-    trim: true,
-    minlength: 5,
-    maxlength: 55
-  }
-});
+const validator = require("validator");
 
 let Todo = mongoose.model("Todo", {
   text: {
@@ -27,6 +19,5 @@ let Todo = mongoose.model("Todo", {
 });
 
 module.exports = {
-  User,
   Todo
 };

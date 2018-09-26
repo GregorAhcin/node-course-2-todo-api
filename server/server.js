@@ -5,13 +5,33 @@ const bodyParser = require("body-parser");
 const { ObjectID } = require("mongodb");
 const _ = require("lodash");
 
-const { User, Todo } = require("./models/models");
+const { User } = require("./models/user");
+const { Todo } = require("./models/todo");
 const { mongoose } = require("./db/db");
 
 let app = express();
 let port = process.env.PORT;
 
 app.use(bodyParser.json());
+
+app.post("/user", (req, res) => {
+  let body = _.pick(req.body, ["email", "password"]);
+
+  let user = new User(body);
+
+  user
+    .save()
+    .then(() => {
+      //res.send(user)
+      return user.generateAuthToken();
+    })
+    .then(token => {
+      res.header("x-auth", token).send(user);
+    })
+    .catch(e => {
+      res.status(400).send(e);
+    });
+});
 
 app.post("/todos", (req, res) => {
   let todo = new Todo({
