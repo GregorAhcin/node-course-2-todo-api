@@ -8,6 +8,7 @@ const _ = require("lodash");
 const { User } = require("./models/user");
 const { Todo } = require("./models/todo");
 const { mongoose } = require("./db/db");
+const { authenticate } = require("./middleware/authenticate");
 
 let app = express();
 let port = process.env.PORT;
@@ -21,7 +22,7 @@ app.post("/user", (req, res) => {
 
   user
     .save()
-    .then(() => {
+    .then(user => {
       //res.send(user)
       return user.generateAuthToken();
     })
@@ -31,6 +32,10 @@ app.post("/user", (req, res) => {
     .catch(e => {
       res.status(400).send(e);
     });
+});
+
+app.get("/user/me", authenticate, (req, res) => {
+  res.send(req.user);
 });
 
 app.post("/todos", (req, res) => {
