@@ -35,7 +35,7 @@ app.post("/user", (req, res) => {
 });
 
 app.get("/user/me", authenticate, (req, res) => {
-  res.send(req.user);
+  res.header("x-auth", req.token).send(req.user);
 });
 
 app.post("/todos", (req, res) => {
