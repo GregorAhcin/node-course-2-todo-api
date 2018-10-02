@@ -30,12 +30,24 @@ app.post("/user", (req, res) => {
       res.header("x-auth", token).send(user);
     })
     .catch(e => {
-      res.status(400).send(e);
+      res.status(400).send();
     });
 });
 
 app.get("/user/me", authenticate, (req, res) => {
   res.header("x-auth", req.token).send(req.user);
+});
+
+app.post("/user/login", (req, res) => {
+  let body = _.pick(req.body, ["email", "password"]);
+
+  User.findByCredentials(body.email, body.password)
+    .then(user => {
+      return user.generateAuthToken().then(token => {
+        res.header("x-auth", token).send(user);
+      });
+    })
+    .catch(e => res.status(400).send());
 });
 
 app.post("/todos", (req, res) => {
