@@ -50,6 +50,17 @@ app.post("/user/login", (req, res) => {
     .catch(e => res.status(400).send());
 });
 
+app.delete("/user/me/token", authenticate, (req, res) => {
+  req.user
+    .deleteToken(req.token)
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch(e => {
+      res.status(400).send();
+    });
+});
+
 app.post("/todos", (req, res) => {
   let todo = new Todo({
     text: req.body.text
