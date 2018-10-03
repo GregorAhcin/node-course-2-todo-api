@@ -219,11 +219,13 @@ describe("POST /user", () => {
         if (err) {
           return done(err);
         }
-        User.findOne({ email }).then(user => {
-          expect(user.email).toBe(email);
-          expect(user.password).toNotEqual(password);
-          done();
-        });
+        User.findOne({ email })
+          .then(user => {
+            expect(user.email).toBe(email);
+            expect(user.password).toNotEqual(password);
+            done();
+          })
+          .catch(e => done(e));
       });
   });
   it("should return validotion error if request invalid", done => {
@@ -239,5 +241,60 @@ describe("POST /user", () => {
       .send({ email: testUsers[0].email, password: "aaaaaaa" })
       .expect(400)
       .end(done);
+  });
+});
+
+describe("POST /user/login", () => {
+  it("should login user and return auth token", done => {
+    request(app)
+      .post("/user/login")
+      .send({
+        email: testUsers[1].email,
+        password: testUsers[1].password
+      })
+      .expect(200)
+      .expect(res => {
+        expect(res.headers["x-auth"]).toExist();
+      })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        User.findOne({ _id: testUsers[1]._id })
+          .then(user => {
+            expect(user.tokens[0]).toInclude({
+              access: "auth",
+              token: res.header["x-auth"]
+            });
+            done();
+          })
+          .catch(e => done(e));
+      });
+  });
+
+  it("should return validation errors if request invalid", done => {
+    request(app)
+      .post("/user/login")
+      .send({
+        email: testUsers[1].email,
+        password: "wrongpassword"
+      })
+      .expect(400)
+      .expect(res => {
+        expect(res.headers["x-auth"]).toNotExist();
+      })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        User.findOne({
+          _id: testUsers[1]._id
+        })
+          .then(user => {
+            expect(user.tokens.length).toBe(0);
+            done();
+          })
+          .catch(e => done(e));
+      });
   });
 });
